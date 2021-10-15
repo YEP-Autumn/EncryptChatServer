@@ -17,4 +17,7 @@ public class YEP {
     public YEP(String MODE) {
         this.MODE = MODE;
     }
+
+    public YEP() {
+    }
 }

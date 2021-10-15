@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.laplace.EncryptionUtils.AHelper;
 import com.laplace.bean.Signalman;
 import com.laplace.bean.YEP;
+import com.laplace.bean.pojo.Chat;
 import com.laplace.bean.pojo.User;
+import com.laplace.mapper.MsgMapper;
 import com.laplace.mapper.UserMapper;
 import org.apache.log4j.Logger;
 import org.java_websocket.WebSocket;
@@ -13,10 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -32,6 +31,9 @@ public class MessageManagement {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private MsgMapper msgMapper;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -112,11 +114,28 @@ public class MessageManagement {
         // 存储数据
         userMapper.insert(user);
         keySocket.put(mKey, webSocket);
+        // 获取不在线时接收到数据
+        List<Chat> msg = msgMapper.getMsg(userId, friendId);
+        // 销毁数据
+        msgMapper.delete(userId);
         // 向用户发送欢迎消息
-        webSocket.send(gson.toJson(new YEP("WELCOME_" + String.valueOf(friendStatus).toUpperCase(Locale.ROOT))));
+        sayHello(webSocket, friendStatus, msg);
         // 处理用户状态
         updateUserStatus(userId, "online");
+    }
 
+    private void sayHello(WebSocket webSocket, boolean friendStatus, List<Chat> messages) {
+        String mode = "WELCOME_" + String.valueOf(friendStatus).toUpperCase(Locale.ROOT);
+        Signalman signalman = new Signalman(mode);
+        List<String> messageList = new ArrayList<>();
+        if (messages.size() != 0) {
+            messages.forEach(chat -> messageList.add(chat.getMsg()));
+        }
+        signalman.setMessages(messageList);
+        String s = gson.toJson(signalman);
+        YEP autumn = new YEP();
+        autumn.SIGNATURE = AHelper.toSecret(getKey(webSocket), s);
+        webSocket.send(gson.toJson(autumn));
     }
 
     /***
@@ -149,24 +168,35 @@ public class MessageManagement {
 
     public void dispatcherMessage(WebSocket webSocket, String s) {
 
+        // 消息提取加安全校验
         Signalman signalman = getSignalman(webSocket, s);
         if (signalman == null) return;
 
-
-        if (!"SIGN".equals(signalman.getMODE())) {
-            logger.error("dispatcherMessage处理消息时：接收到的消息模式不为SIGN");
-            return;
+        if ("SIGN".equals(signalman.getMODE())) {
+            forwardText(webSocket, s, signalman);
         }
+
+    }
+
+    private void forwardText(WebSocket webSocket, String s, Signalman signalman) {
         //判断信息的接收方是否在线
         long targetId = signalman.getTargetId();
         User userTarget = userMapper.getUserById(targetId);
         if (userTarget == null) {
             webSocket.send(gson.toJson(new YEP("RECEIVED")));
             //记录到数据库
+            saveData(signalman);
             return;
         }
         WebSocket socket = keySocket.get(userTarget.getMKey());
         socket.send(s);
+    }
+
+    private void saveData(Signalman signalman) {
+        long userId = userMapper.getUserByKey(signalman.getKey()).getUserId();
+        String message = signalman.getMessage();
+        long friendId = signalman.getTargetId();
+        msgMapper.insert(new Chat(userId, friendId, message, new Timestamp(System.currentTimeMillis())));
     }
 
     /**

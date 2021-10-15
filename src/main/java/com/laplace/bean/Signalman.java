@@ -19,7 +19,9 @@ public class Signalman {
      */
     private String MODE;
 
-    private List<Chat> messages;
+    private String message;
+
+    private List<String> messages;
 
     private long targetId;
 

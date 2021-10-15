@@ -12,5 +12,4 @@ mybatis:
 #  mapper-locations: classpath:*.xml
 
 
-
 debug: true

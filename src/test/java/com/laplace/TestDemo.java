@@ -1,5 +1,6 @@
 package com.laplace;
 
+import com.laplace.bean.pojo.Chat;
 import com.laplace.server.WebSocketClient;
 import com.laplace.server.WebSocketServer;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class TestDemo {
 //    }
 
     public static void main(String[] args) {
-        final String[] key = new String[1];
-        System.out.println(key[0]);
+        Chat chat = new Chat();
+        System.out.println(chat.getUserId());
     }
 }
