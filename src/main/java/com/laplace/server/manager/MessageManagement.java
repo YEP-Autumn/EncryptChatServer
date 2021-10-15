@@ -124,6 +124,15 @@ public class MessageManagement {
         updateUserStatus(userId, "online");
     }
 
+    /**
+     * 登录验证通过
+     * 向用户发送欢迎使用的消息
+     * 附:不在线时接收到数据
+     *
+     * @param webSocket
+     * @param friendStatus
+     * @param messages     不在线时接收到数据
+     */
     private void sayHello(WebSocket webSocket, boolean friendStatus, List<Chat> messages) {
         String mode = "WELCOME_" + String.valueOf(friendStatus).toUpperCase(Locale.ROOT);
         Signalman signalman = new Signalman(mode);
@@ -138,8 +147,9 @@ public class MessageManagement {
         webSocket.send(gson.toJson(autumn));
     }
 
-    /***
+    /**
      * 用户状态变更
+     *
      * @param userId
      * @param status
      */
@@ -166,6 +176,13 @@ public class MessageManagement {
 
     }
 
+
+    /**
+     * onMessage的消息分类处理
+     *
+     * @param webSocket
+     * @param s
+     */
     public void dispatcherMessage(WebSocket webSocket, String s) {
 
         // 消息提取加安全校验
@@ -175,23 +192,37 @@ public class MessageManagement {
         if ("SIGN".equals(signalman.getMODE())) {
             forwardText(webSocket, s, signalman);
         }
-
     }
 
+    /**
+     * onMessage文本类型数据的处理
+     *
+     * @param webSocket
+     * @param s
+     * @param signalman
+     */
     private void forwardText(WebSocket webSocket, String s, Signalman signalman) {
         //判断信息的接收方是否在线
         long targetId = signalman.getTargetId();
         User userTarget = userMapper.getUserById(targetId);
+        User user = userMapper.getUserByKey(getKey(webSocket)); //测试用数据
         if (userTarget == null) {
             webSocket.send(gson.toJson(new YEP("RECEIVED")));
             //记录到数据库
             saveData(signalman);
+            logger.info("好友实际状态和用户记录状态是否相符:" + !user.isFriendStatus()); //测试用数据
             return;
         }
         WebSocket socket = keySocket.get(userTarget.getMKey());
         socket.send(s);
+        logger.info("好友实际状态和用户记录状态是否相符:" + user.isFriendStatus()); //测试用数据
     }
 
+    /**
+     * 好友不在线，将消息存储到数据库中
+     *
+     * @param signalman
+     */
     private void saveData(Signalman signalman) {
         long userId = userMapper.getUserByKey(signalman.getKey()).getUserId();
         String message = signalman.getMessage();
@@ -241,5 +272,26 @@ public class MessageManagement {
         });
         return key[0];
     }
+
+
+    /**
+     * 用户下线删除用户数据
+     *
+     * @param userId
+     */
+    public void eliminateUserInfo(int userId) {
+        // 下线通知
+        updateUserStatus(userId, "offline");
+        int num = userMapper.deleteUserById(userId);
+        // 删除数据库中存放的消息
+        msgMapper.delete(userId);
+//        if (num > 0) {
+//            socketManager.eliminateUser(userId);
+//            logger.info("[" + userId + "]" + "离线,数据消除成功...");
+//            return;
+//        }
+//        logger.info("数据库信息未能正确删除.USER_ID=" + userId + "Date:");
+    }
+
 
 }
