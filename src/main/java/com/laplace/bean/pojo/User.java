@@ -10,9 +10,9 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    private int userId;
+    private long userId;
     private String mKey;
-    private String friendId;
+    private long friendId;
     private Timestamp connectTime;
-
+    private boolean friendStatus;
 }

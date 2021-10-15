@@ -7,6 +7,8 @@ import org.mybatis.spring.annotation.MapperScans;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
+import java.util.Date;
 
 
 @SpringBootTest
@@ -17,8 +19,8 @@ class EncryptChatServerApplicationTests {
 
     @Test
     void contextLoads() {
-        User user = userMapper.getUser(231);
-        System.out.println(user);
+//        userMapper.insert(new User(13222156L, "124223", 456L,new Timestamp(System.currentTimeMillis())));
+        User userById = userMapper.getUserById(123);
+        System.out.println(userById);
     }
-
 }

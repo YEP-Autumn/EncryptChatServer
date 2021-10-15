@@ -8,8 +8,6 @@ import java.sql.Timestamp;
 
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Chat {
 
     private int friendId;
