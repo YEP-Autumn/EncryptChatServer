@@ -31,11 +31,11 @@ public class TestDemo {
 
     public static void main(String[] args) throws URISyntaxException {
         HashMap<String, String> map = new HashMap<>();
-        map.put("userId", "231");
+        map.put("userId", "2222");
         map.put("friendId", "654321");
         long time = System.currentTimeMillis();
-        map.put("TIME", String.valueOf(time));
-        String sign = String.valueOf(((long) 231 + (long) 654321) * time);
+        map.put("time", String.valueOf(time));
+        String sign = String.valueOf(((long) 2222 + (long) 654321) * time);
         map.put("sign", AHelper.toSecret("YEP", sign));
         WebSocketClient webSocketClient = new WebSocketClient(new URI("ws://127.0.0.1:8083"), map);
         System.out.println("-----");

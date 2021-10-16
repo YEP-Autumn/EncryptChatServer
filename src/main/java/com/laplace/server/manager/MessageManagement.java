@@ -57,7 +57,7 @@ public class MessageManagement {
                 return false;
             }
             String time = clientHandshake.getFieldValue("time");
-            if ("".equals(time) || System.currentTimeMillis() - Long.parseLong(time) > 60 * 1000) {
+            if ("".equals(time) || System.currentTimeMillis() - Long.parseLong(time) > 30 * 1000) {
                 logger.warn("存在客户端不带TIME发送socket或者时间过期");
                 return false;
             }
