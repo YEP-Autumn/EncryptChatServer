@@ -2,8 +2,8 @@ package com.laplace.server.manager;
 
 import com.google.gson.Gson;
 import com.laplace.EncryptionUtils.AHelper;
-import com.laplace.bean.Signalman;
-import com.laplace.bean.YEP;
+import com.laplace.bean.utilsbean.Signalman;
+import com.laplace.bean.utilsbean.YEP;
 import com.laplace.bean.pojo.Chat;
 import com.laplace.bean.pojo.User;
 import com.laplace.mapper.MsgMapper;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * @Author: YEP
@@ -41,6 +39,8 @@ public class MessageManagement {
 
     private Map<String, WebSocket> keySocket = new HashMap<>();
 
+    public MessageManagement() {
+    }
 
     /**
      * 登录校验
@@ -56,8 +56,7 @@ public class MessageManagement {
                 logger.warn("存在客户端不带sign发送socket");
                 return false;
             }
-
-            String time = clientHandshake.getFieldValue("TIME");
+            String time = clientHandshake.getFieldValue("time");
             if ("".equals(time) || System.currentTimeMillis() - Long.parseLong(time) > 60 * 1000) {
                 logger.warn("存在客户端不带TIME发送socket或者时间过期");
                 return false;
@@ -82,12 +81,21 @@ public class MessageManagement {
             // 签名校验
             String signature = AHelper.toSecret("YEP", String.valueOf(signL));
             if (sign.equals(signature)) {
+                if (userMapper.getUserById(userIdL) != null) {
+                    // https://www.rfc-editor.org/rfc/rfc6455#section-7.4.2
+                    // 3000 - 3999
+                    // 4000 - 4999
+                    webSocket.close(4040,"用户userId已被使用");
+                    logger.info("用户userId已被使用");
+                    return true;
+                }
                 // 校验通过记录用户
                 Map<String, Object> map = new HashMap<>();
                 map.put("userId", userIdL);
                 map.put("friendId", friendIdL);
                 map.put("mKey", clientHandshake.getFieldValue("Sec-WebSocket-Key"));
                 saveUserInfo(webSocket, map);
+                logger.info("用户【" + userId + "】登录验证通过");
                 return true;
             }
             return false;
@@ -109,15 +117,13 @@ public class MessageManagement {
         String mKey = (String) map.get("mKey");
         long friendId = (long) map.get("friendId");
         // 获取好友在线信息
-        boolean friendStatus = userMapper.getUserById(userId) == null;
+        boolean friendStatus = userMapper.getUserById(friendId) != null;
         User user = new User(userId, mKey, friendId, new Timestamp(System.currentTimeMillis()), friendStatus);
         // 存储数据
         userMapper.insert(user);
         keySocket.put(mKey, webSocket);
         // 获取不在线时接收到数据
         List<Chat> msg = msgMapper.getMsg(userId, friendId);
-        // 销毁数据
-        msgMapper.delete(userId);
         // 向用户发送欢迎消息
         sayHello(webSocket, friendStatus, msg);
         // 处理用户状态
@@ -137,13 +143,15 @@ public class MessageManagement {
         String mode = "WELCOME_" + String.valueOf(friendStatus).toUpperCase(Locale.ROOT);
         Signalman signalman = new Signalman(mode);
         List<String> messageList = new ArrayList<>();
-        if (messages.size() != 0) {
+        YEP autumn = new YEP();
+        if (messages.size() == 0) {
             messages.forEach(chat -> messageList.add(chat.getMsg()));
+            autumn.MODE = mode;
+            webSocket.send(gson.toJson(autumn));
+            return;
         }
         signalman.setMessages(messageList);
-        String s = gson.toJson(signalman);
-        YEP autumn = new YEP();
-        autumn.SIGNATURE = AHelper.toSecret(getKey(webSocket), s);
+        autumn.SIGNATURE = AHelper.toSecret(getKey(webSocket), gson.toJson(signalman));
         webSocket.send(gson.toJson(autumn));
     }
 
@@ -155,6 +163,7 @@ public class MessageManagement {
      */
     protected void updateUserStatus(long userId, String status) {
         List<User> usersByFriendId = userMapper.getUsersByFriendId(userId);
+        long friendId = userMapper.getUserById(userId).getFriendId();
         // 修改数据库中自己的状态并向所有好友发送状态变更信息
         if ("online".equals(status)) {
             //修改数据库
@@ -164,6 +173,8 @@ public class MessageManagement {
                 WebSocket socket = keySocket.get(user.getMKey());
                 socket.send(gson.toJson(new YEP("ONLINE")));
             });
+            // 销毁好友发送给自己的数据
+            msgMapper.delete(friendId, userId);
             return;
         }
         if ("offline".equals(status)) {
@@ -172,7 +183,10 @@ public class MessageManagement {
                 WebSocket socket = keySocket.get(user.getMKey());
                 socket.send(gson.toJson(new YEP("OFFLINE")));
             });
+            // 删除自己给好友发送的消息
+            msgMapper.delete(userId, friendId);
         }
+
 
     }
 
@@ -264,11 +278,8 @@ public class MessageManagement {
      */
     private String getKey(WebSocket webSocket) {
         final String[] key = new String[1];
-        keySocket.forEach(new BiConsumer<String, WebSocket>() {
-            @Override
-            public void accept(String s, WebSocket w) {
-                if (w.equals(webSocket)) key[0] = s;
-            }
+        keySocket.forEach((s, w) -> {
+            if (w.equals(webSocket)) key[0] = s;
         });
         return key[0];
     }
@@ -277,20 +288,19 @@ public class MessageManagement {
     /**
      * 用户下线删除用户数据
      *
-     * @param userId
+     * @param webSocket
      */
-    public void eliminateUserInfo(int userId) {
+    public void eliminateUserInfo(WebSocket webSocket) {
+        String key = getKey(webSocket);
+        long userId = userMapper.getUserByKey(key).getUserId();
         // 下线通知
         updateUserStatus(userId, "offline");
         int num = userMapper.deleteUserById(userId);
-        // 删除数据库中存放的消息
-        msgMapper.delete(userId);
-//        if (num > 0) {
-//            socketManager.eliminateUser(userId);
-//            logger.info("[" + userId + "]" + "离线,数据消除成功...");
-//            return;
-//        }
-//        logger.info("数据库信息未能正确删除.USER_ID=" + userId + "Date:");
+        if (num > 0) {
+            logger.info("[" + userId + "]" + "离线,数据消除成功...");
+            return;
+        }
+        logger.info("数据库信息未能正确删除.USER_ID=" + userId + "Date:");
     }
 
 

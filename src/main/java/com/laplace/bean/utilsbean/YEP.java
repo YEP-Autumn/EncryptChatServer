@@ -1,4 +1,4 @@
-package com.laplace.bean;
+package com.laplace.bean.utilsbean;
 
 import lombok.Data;
 

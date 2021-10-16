@@ -1,4 +1,4 @@
-package com.laplace.bean;
+package com.laplace.bean.utilsbean;
 
 import com.laplace.bean.pojo.Chat;
 import lombok.Data;

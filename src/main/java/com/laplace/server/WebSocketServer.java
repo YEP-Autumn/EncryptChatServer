@@ -1,45 +1,43 @@
 package com.laplace.server;
 
-import com.laplace.bean.Signalman;
-import com.laplace.bean.YEP;
 import com.laplace.server.manager.MessageManagement;
+import org.apache.log4j.Logger;
 import org.java_websocket.WebSocket;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.exceptions.InvalidDataException;
 import org.java_websocket.handshake.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.net.InetSocketAddress;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.util.Iterator;
-import java.util.Set;
 
 
+@Component
 public class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Resource
-    MessageManagement management;
+    private MessageManagement management;
+
 
     public WebSocketServer(InetSocketAddress address) {
         super(address);
     }
 
-
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
-        boolean isSecurity = management.SecurityVerification(webSocket,clientHandshake);
-        if (!isSecurity)webSocket.close();
+        boolean isSecurityVerification = management.SecurityVerification(webSocket, clientHandshake);
+        if(!isSecurityVerification)webSocket.close();
+
     }
 
     @Override
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
-
+        management.eliminateUserInfo(webSocket);
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String s) {
-        management.dispatcherMessage(webSocket,s);
+        management.dispatcherMessage(webSocket, s);
 
     }
 
@@ -50,7 +48,6 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public void onStart() {
-
     }
 
 }
