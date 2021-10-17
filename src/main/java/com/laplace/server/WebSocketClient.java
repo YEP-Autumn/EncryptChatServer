@@ -4,10 +4,14 @@ package com.laplace.server;
 import com.google.gson.Gson;
 import com.laplace.bean.utilsbean.Signalman;
 import com.laplace.bean.utilsbean.YEP;
+import org.java_websocket.WebSocket;
+import org.java_websocket.exceptions.InvalidDataException;
+import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @Author: YEP
@@ -51,6 +55,30 @@ public class WebSocketClient extends org.java_websocket.client.WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
 
+    }
+
+    @Override
+    public void onWebsocketHandshakeReceivedAsClient(WebSocket conn, ClientHandshake request, ServerHandshake response) throws InvalidDataException {
+        super.onWebsocketHandshakeReceivedAsClient(conn, request, response);
+        System.out.println("Received");
+        response.iterateHttpFields().forEachRemaining(new Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                System.out.println(s + ":" + request.getFieldValue(s));
+            }
+        });
+    }
+
+    @Override
+    public void onWebsocketHandshakeSentAsClient(WebSocket conn, ClientHandshake request) throws InvalidDataException {
+        super.onWebsocketHandshakeSentAsClient(conn, request);
+        System.out.println("Sent");
+        request.iterateHttpFields().forEachRemaining(new Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                System.out.println(s + ":" + request.getFieldValue(s));
+            }
+        });
     }
 
     @Override

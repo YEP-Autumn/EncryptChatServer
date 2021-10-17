@@ -24,18 +24,18 @@ public class TestDemo {
     WebSocketServer webSocketServer = new WebSocketServer(new InetSocketAddress(8788));
 
 
-    @Test
+//    @Test
     public void server() {
         webSocketServer.run();
     }
 
     public static void main(String[] args) throws URISyntaxException {
         HashMap<String, String> map = new HashMap<>();
-        map.put("userId", "2222");
+        map.put("userId", "485");
         map.put("friendId", "654321");
         long time = System.currentTimeMillis();
         map.put("time", String.valueOf(time));
-        String sign = String.valueOf(((long) 2222 + (long) 654321) * time);
+        String sign = String.valueOf(((long) 485 + (long) 654321) * time);
         map.put("sign", AHelper.toSecret("YEP", sign));
         WebSocketClient webSocketClient = new WebSocketClient(new URI("ws://127.0.0.1:8083"), map);
         System.out.println("-----");

@@ -77,7 +77,9 @@ public class MessageManagement {
             long friendIdL = Long.parseLong(friendId);
             long timeL = Long.parseLong(time);
             long signL = (userIdL + friendIdL) * timeL;
-
+            if (userIdL == 0 || friendIdL == 0) {
+                return false;
+            }
             // 签名校验
             String signature = AHelper.toSecret("YEP", String.valueOf(signL));
             if (sign.equals(signature)) {
@@ -85,7 +87,7 @@ public class MessageManagement {
                     // https://www.rfc-editor.org/rfc/rfc6455#section-7.4.2
                     // 3000 - 3999
                     // 4000 - 4999
-                    webSocket.close(4040,"用户userId已被使用");
+                    webSocket.close(4040, "用户userId已被使用");
                     logger.info("用户userId已被使用");
                     return true;
                 }
@@ -144,13 +146,11 @@ public class MessageManagement {
         Signalman signalman = new Signalman(mode);
         List<String> messageList = new ArrayList<>();
         YEP autumn = new YEP();
-        if (messages.size() == 0) {
+        autumn.MODE = mode;
+        if (messages.size() != 0) {
             messages.forEach(chat -> messageList.add(chat.getMsg()));
-            autumn.MODE = mode;
-            webSocket.send(gson.toJson(autumn));
-            return;
+            signalman.setMessages(messageList);
         }
-        signalman.setMessages(messageList);
         autumn.SIGNATURE = AHelper.toSecret(getKey(webSocket), gson.toJson(signalman));
         webSocket.send(gson.toJson(autumn));
     }
@@ -219,17 +219,14 @@ public class MessageManagement {
         //判断信息的接收方是否在线
         long targetId = signalman.getTargetId();
         User userTarget = userMapper.getUserById(targetId);
-        User user = userMapper.getUserByKey(getKey(webSocket)); //测试用数据
         if (userTarget == null) {
             webSocket.send(gson.toJson(new YEP("RECEIVED")));
             //记录到数据库
             saveData(signalman);
-            logger.info("好友实际状态和用户记录状态是否相符:" + !user.isFriendStatus()); //测试用数据
             return;
         }
         WebSocket socket = keySocket.get(userTarget.getMKey());
         socket.send(s);
-        logger.info("好友实际状态和用户记录状态是否相符:" + user.isFriendStatus()); //测试用数据
     }
 
     /**
