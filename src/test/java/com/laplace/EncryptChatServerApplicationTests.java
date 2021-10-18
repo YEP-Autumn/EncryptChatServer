@@ -20,17 +20,17 @@ import java.util.HashMap;
 @SpringBootTest
 class EncryptChatServerApplicationTests {
 
-    @Resource
-    UserMapper userMapper;
-
-    @Resource
-    WebSocketServer webSocketServer;
+//    @Resource
+//    UserMapper userMapper;
+//
+//    @Resource
+//    WebSocketServer webSocketServer;
 
 
     @Test
     public void server() throws URISyntaxException, InterruptedException {
-        webSocketServer.run();
-        Thread.sleep(3000);
+//        webSocketServer.run();
+//        Thread.sleep(3000);
 //        WebSocketClient webSocketClient = new WebSocketClient(new URI("ws://localhost:8788"),new HashMap<>());
 //        webSocketClient.connect();
     }
@@ -39,7 +39,7 @@ class EncryptChatServerApplicationTests {
     @Test
     void contextLoads() {
 //        userMapper.insert(new User(13222156L, "124223", 456L,new Timestamp(System.currentTimeMillis())));
-        User userById = userMapper.getUserById(123);
-        System.out.println(userById);
+//        User userById = userMapper.getUserById(123);
+//        System.out.println(userById);
     }
 }

@@ -12,3 +12,9 @@ mybatis:
 
 
 debug: true
+server:
+  port: 9999
+  ssl:
+    key-store: classpath:YEP-Autumn.jks
+    key-store-password: a8m602l7midh3
+    key-store-type: JKS

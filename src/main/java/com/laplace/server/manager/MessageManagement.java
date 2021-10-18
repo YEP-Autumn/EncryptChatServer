@@ -11,6 +11,8 @@ import com.laplace.mapper.UserMapper;
 import org.apache.log4j.Logger;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -37,9 +39,15 @@ public class MessageManagement {
 
     private Gson gson = new Gson();
 
-    private Map<String, WebSocket> keySocket = new HashMap<>();
+    @Resource
+    private Map<String, WebSocket> keySocket;
+
+
+    @Resource
+    private List<String> offDevices;
 
     public MessageManagement() {
+
     }
 
     /**
@@ -206,6 +214,9 @@ public class MessageManagement {
         if ("SIGN".equals(signalman.getMODE())) {
             forwardText(webSocket, s, signalman);
         }
+        if ("TOKEN".equals(signalman.getMODE())) {
+            offDevices.remove(signalman.getKey());
+        }
     }
 
     /**
@@ -258,7 +269,7 @@ public class MessageManagement {
             logger.error("getSignalman消息提取时：发现空消息");
             return null;
         }
-        Signalman signalman = gson.fromJson(autumn.SIGNATURE, Signalman.class);
+        Signalman signalman = gson.fromJson(AHelper.toContent(getKey(webSocket),autumn.SIGNATURE), Signalman.class);
         //验证消息来源可靠性
         if (!getKey(webSocket).equals(signalman.getKey()) || signalman.getKey() == null) {
             webSocket.close();
@@ -293,6 +304,7 @@ public class MessageManagement {
         // 下线通知
         updateUserStatus(userId, "offline");
         int num = userMapper.deleteUserById(userId);
+        keySocket.remove(key);
         if (num > 0) {
             logger.info("[" + userId + "]" + "离线,数据消除成功...");
             return;

@@ -9,12 +9,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.Resource;
 import java.net.InetSocketAddress;
 
 @SpringBootApplication
 @MapperScan("com.laplace.mapper")
+@EnableScheduling
 public class EncryptChatServerApplication {
 
     public static void main(String[] args) {

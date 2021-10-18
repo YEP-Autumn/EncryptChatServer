@@ -1,11 +1,8 @@
 package com.laplace.server;
 
 import com.laplace.server.manager.MessageManagement;
-import org.apache.log4j.Logger;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
