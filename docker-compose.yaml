@@ -1,0 +1,17 @@
+version: "3"
+services:
+  ecServer:
+    build: .
+    image: openjdk:15-jdk-alpine
+    environment:
+      v: 1
+      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/yep?useUnicode=true&characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2B8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 2017248646
+      SPRING_DATASOURCE_DRIVER-CALSS-NAME: com.mysql.cj.jdbc.Driver
+    ports:
+      - 8788:8788
+      - 3306:3306
+      - 8080:8088
+
+
