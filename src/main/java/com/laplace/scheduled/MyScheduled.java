@@ -32,6 +32,7 @@ public class MyScheduled {
 
     @Scheduled(fixedDelay = 1000 * 60 * 60, initialDelay = 60 * 1000 * 15)
     public void send() {
+        if(offDevices==null)return;
         keySocket.forEach(new BiConsumer<String, WebSocket>() {
             @Override
             public void accept(String s, WebSocket s2) {
@@ -44,6 +45,7 @@ public class MyScheduled {
 
     @Scheduled(fixedDelay = 1000 * 60 * 60, initialDelay = 60 * 1000 * 30)
     public void sendSecond () {
+        if(offDevices==null)return;
         offDevices.forEach(new Consumer<String>() {
             @Override
             public void accept(String s) {
@@ -55,6 +57,7 @@ public class MyScheduled {
 
     @Scheduled(fixedDelay = 1000 * 60 * 60, initialDelay = 60 * 1000 * 35)
     public void remove () {
+        if(offDevices==null)return;
         offDevices.forEach(new Consumer<String>() {
             @Override
             public void accept(String s) {
