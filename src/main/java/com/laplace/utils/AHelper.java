@@ -1,4 +1,4 @@
-package com.laplace.EncryptionUtils;
+package com.laplace.utils;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 

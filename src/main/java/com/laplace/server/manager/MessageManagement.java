@@ -1,7 +1,7 @@
 package com.laplace.server.manager;
 
 import com.google.gson.Gson;
-import com.laplace.EncryptionUtils.AHelper;
+import com.laplace.utils.AHelper;
 import com.laplace.bean.utilsbean.Signalman;
 import com.laplace.bean.utilsbean.YEP;
 import com.laplace.bean.pojo.Chat;
@@ -11,8 +11,6 @@ import com.laplace.mapper.UserMapper;
 import org.apache.log4j.Logger;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

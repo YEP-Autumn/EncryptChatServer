@@ -1,45 +1,58 @@
 package com.laplace;
 
-import com.laplace.bean.pojo.User;
-import com.laplace.mapper.UserMapper;
-import com.laplace.server.WebSocketClient;
-import com.laplace.server.WebSocketServer;
+import io.minio.*;
+import io.minio.errors.*;
+import io.minio.messages.Bucket;
+import io.minio.messages.Item;
+import lombok.SneakyThrows;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.junit.jupiter.api.Test;
-import org.mybatis.spring.annotation.MapperScans;
+import org.mockito.internal.util.io.IOUtil;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.function.Consumer;
 
 
 @SpringBootTest
 class EncryptChatServerApplicationTests {
 
-//    @Resource
-//    UserMapper userMapper;
+    @Resource
+    MinioClient minioClient;
+
+
+    @Test
+    public void server() throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        List<Bucket> buckets = minioClient.listBuckets();
+        buckets.forEach(new Consumer<Bucket>() {
+            @Override
+            public void accept(Bucket bucket) {
+                System.out.println(bucket.name());
+                System.out.println(bucket.creationDate());
+            }
+        });
+
+        System.out.println(minioClient.bucketExists(BucketExistsArgs.builder().bucket("my-bucketname").build()));
+        System.out.println(minioClient.bucketExists(BucketExistsArgs.builder().bucket("picture").build()));
+//        Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
+//                .bucket("picture")
+//                .prefix("3")
+//                .build());
 //
-//    @Resource
-//    WebSocketServer webSocketServer;
-
-
-    @Test
-    public void server() throws URISyntaxException, InterruptedException {
-//        webSocketServer.run();
-//        Thread.sleep(3000);
-//        WebSocketClient webSocketClient = new WebSocketClient(new URI("ws://localhost:8788"),new HashMap<>());
-//        webSocketClient.connect();
+//        for (Result<Item> result : results) {
+//            System.out.println(result.get().objectName());
+//        }
+        GetObjectResponse picture = minioClient.getObject(GetObjectArgs.builder()
+                .bucket("picture")
+                .object("01015c9f0048f4a61a08dab45daf8783c5a29e80.png")
+                .build());
+        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\admin\\Desktop\\" + picture.object());
+        IOUtils.copy(picture,outputStream);
     }
 
-
-    @Test
-    void contextLoads() {
-//        userMapper.insert(new User(13222156L, "124223", 456L,new Timestamp(System.currentTimeMillis())));
-//        User userById = userMapper.getUserById(123);
-//        System.out.println(userById);
-    }
 }

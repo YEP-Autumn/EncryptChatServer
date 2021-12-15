@@ -1,4 +1,4 @@
-package com.laplace.EncryptionUtils;
+package com.laplace.utils;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

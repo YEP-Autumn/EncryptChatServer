@@ -11,10 +11,14 @@ mybatis:
 #  mapper-locations: classpath:*.xml
 
 
-debug: true
 server:
   port: 8088
   ssl:
     key-store: classpath:YEP-Autumn.jks
     key-store-password: a8m602l7midh3
     key-store-type: JKS
+
+minio:
+  endpoint: http://23.94.53.48:9090
+  accessKey: YEP
+  secretKey: 2017248646
