@@ -1,9 +1,8 @@
-package com.laplace.mapper;
+package com.laplace.core.mapper;
 
-import com.laplace.bean.pojo.Chat;
+import com.laplace.core.bean.pojo.Chat;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 /**

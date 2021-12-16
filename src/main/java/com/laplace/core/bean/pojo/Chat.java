@@ -1,4 +1,4 @@
-package com.laplace.bean.pojo;
+package com.laplace.core.bean.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

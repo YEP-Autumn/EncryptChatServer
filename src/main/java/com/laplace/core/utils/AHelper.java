@@ -1,7 +1,6 @@
-package com.laplace.utils;
+package com.laplace.core.utils;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.Base64;

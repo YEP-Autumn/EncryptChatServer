@@ -1,21 +1,16 @@
 package com.laplace;
 
-import com.laplace.server.WebSocketServer;
+import com.laplace.core.server.WebSocketServer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import javax.annotation.Resource;
-import java.net.InetSocketAddress;
 
 @SpringBootApplication
-@MapperScan("com.laplace.mapper")
+@MapperScan("com.laplace.core.mapper")
 @EnableScheduling
 public class EncryptChatServerApplication {
 

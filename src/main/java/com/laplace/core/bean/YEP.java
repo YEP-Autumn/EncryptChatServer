@@ -1,6 +1,4 @@
-package com.laplace.bean.utilsbean;
-
-import lombok.Data;
+package com.laplace.core.bean;
 
 /**
  * @Author: YEP

@@ -1,9 +1,9 @@
-package com.laplace.server;
+package com.laplace.core.server;
 
 
 import com.google.gson.Gson;
-import com.laplace.bean.utilsbean.Signalman;
-import com.laplace.bean.utilsbean.YEP;
+import com.laplace.core.bean.Signalman;
+import com.laplace.core.bean.YEP;
 import org.java_websocket.WebSocket;
 import org.java_websocket.exceptions.InvalidDataException;
 import org.java_websocket.handshake.ClientHandshake;
@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 
 /**
  * @Author: YEP
- * @CreateDate: 2021/10/15 13:56
  * @Info:
  * @Email:
  */

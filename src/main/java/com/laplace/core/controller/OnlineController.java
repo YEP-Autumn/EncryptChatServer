@@ -1,6 +1,6 @@
-package com.laplace.controller;
+package com.laplace.core.controller;
 
-import com.laplace.mapper.IsOnline;
+import com.laplace.core.service.OnlineService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,10 +13,10 @@ import javax.annotation.Resource;
  * @Email:
  */
 @Controller
-public class MyController {
+public class OnlineController {
 
     @Resource
-    IsOnline isOnline;
+    OnlineService service;
 
     @ResponseBody
     @RequestMapping("/isUsed")
@@ -24,7 +24,7 @@ public class MyController {
         if (userId == 0) {
             return true;
         }
-        return isOnline.isOnline(userId);
+        return service.isOnline(userId);
     }
 
 }

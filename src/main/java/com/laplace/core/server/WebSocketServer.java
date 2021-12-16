@@ -1,6 +1,6 @@
-package com.laplace.server;
+package com.laplace.core.server;
 
-import com.laplace.server.manager.MessageManagement;
+import com.laplace.core.server.manager.MessageManagement;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.*;
 import org.springframework.stereotype.Component;

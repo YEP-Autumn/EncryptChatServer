@@ -12,13 +12,27 @@ mybatis:
 
 
 server:
-  port: 8088
+  port: 8080
   ssl:
     key-store: classpath:YEP-Autumn.jks
     key-store-password: a8m602l7midh3
     key-store-type: JKS
 
+#minio:
+#  endpoint: http://23.94.53.48:9090
+#  accessKey: YEP
+#  secretKey: 2017248646
+
 minio:
-  endpoint: http://23.94.53.48:9090
+  endpoint: http://81.68.81.151:9090
   accessKey: YEP
   secretKey: 2017248646
+
+
+
+logging:
+  pattern:
+    console: "[YEP] %d{HH:mm:ss.SSS} %p [%t] %C.%M(%L) | %m%n"
+  level:
+    com.netflix.discovery: 'INFO'
+    org.springframework.cloud: 'WARN'

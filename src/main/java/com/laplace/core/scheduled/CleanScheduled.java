@@ -1,8 +1,8 @@
-package com.laplace.scheduled;
+package com.laplace.core.scheduled;
 
 import com.google.gson.Gson;
-import com.laplace.bean.utilsbean.Signalman;
-import com.laplace.bean.utilsbean.YEP;
+import com.laplace.core.bean.Signalman;
+import com.laplace.core.bean.YEP;
 import org.java_websocket.WebSocket;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  * @Email:
  */
 @Component
-public class MyScheduled {
+public class CleanScheduled {
 
     @Resource
     HashMap<String, WebSocket> keySocket;

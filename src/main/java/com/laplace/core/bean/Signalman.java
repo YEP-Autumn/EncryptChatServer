@@ -1,6 +1,5 @@
-package com.laplace.bean.utilsbean;
+package com.laplace.core.bean;
 
-import com.laplace.bean.pojo.Chat;
 import lombok.Data;
 
 import java.util.List;

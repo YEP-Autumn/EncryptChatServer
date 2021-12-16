@@ -1,13 +1,14 @@
-package com.laplace.server.manager;
+package com.laplace.core.server.manager;
 
 import com.google.gson.Gson;
-import com.laplace.utils.AHelper;
-import com.laplace.bean.utilsbean.Signalman;
-import com.laplace.bean.utilsbean.YEP;
-import com.laplace.bean.pojo.Chat;
-import com.laplace.bean.pojo.User;
-import com.laplace.mapper.MsgMapper;
-import com.laplace.mapper.UserMapper;
+
+import com.laplace.core.bean.Signalman;
+import com.laplace.core.bean.YEP;
+import com.laplace.core.bean.pojo.Chat;
+import com.laplace.core.bean.pojo.User;
+import com.laplace.core.mapper.MsgMapper;
+import com.laplace.core.mapper.UserMapper;
+import com.laplace.core.utils.AHelper;
 import org.apache.log4j.Logger;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
