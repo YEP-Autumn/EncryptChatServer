@@ -3,6 +3,8 @@ package com.laplace.core.controller;
 import com.laplace.core.service.FileService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,8 +24,14 @@ public class FileController {
     @Resource
     FileService service;
 
-    @PostMapping("/upload")
-    public Object uploadPicture(MultipartFile multipartFile) {
+    @PostMapping("/uploadPic")
+    public Object uploadPic(@RequestParam("image") MultipartFile multipartFile) {
         return service.uploadPic(multipartFile);
+    }
+
+
+    @PostMapping("/uploadMusic")
+    public Object uploadMusic(@RequestParam("music") MultipartFile multipartFile) {
+        return service.uploadMusic(multipartFile);
     }
 }

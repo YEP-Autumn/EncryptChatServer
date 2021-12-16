@@ -32,7 +32,8 @@ public class CleanScheduled {
 
     @Scheduled(fixedDelay = 1000 * 60 * 60, initialDelay = 60 * 1000 * 15)
     public void send() {
-        if(offDevices==null)return;
+        if (offDevices.size() == 0) return;
+        if (keySocket.keySet().size() == 0) return;
         keySocket.forEach(new BiConsumer<String, WebSocket>() {
             @Override
             public void accept(String s, WebSocket s2) {
@@ -44,8 +45,9 @@ public class CleanScheduled {
 
 
     @Scheduled(fixedDelay = 1000 * 60 * 60, initialDelay = 60 * 1000 * 30)
-    public void sendSecond () {
-        if(offDevices==null)return;
+    public void sendSecond() {
+        if (offDevices.size() == 0) return;
+        if (keySocket.keySet().size() == 0) return;
         offDevices.forEach(new Consumer<String>() {
             @Override
             public void accept(String s) {
@@ -56,8 +58,9 @@ public class CleanScheduled {
     }
 
     @Scheduled(fixedDelay = 1000 * 60 * 60, initialDelay = 60 * 1000 * 35)
-    public void remove () {
-        if(offDevices==null)return;
+    public void remove() {
+        if (offDevices.size() == 0) return;
+        if (keySocket.keySet().size() == 0) return;
         offDevices.forEach(new Consumer<String>() {
             @Override
             public void accept(String s) {

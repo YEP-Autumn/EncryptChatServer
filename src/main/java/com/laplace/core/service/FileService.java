@@ -15,4 +15,6 @@ public interface FileService {
 
     Object uploadPic(MultipartFile multipartFile);
 
+
+    Object uploadMusic(MultipartFile multipartFile);
 }
