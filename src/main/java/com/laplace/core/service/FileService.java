@@ -1,6 +1,7 @@
 package com.laplace.core.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -15,6 +16,9 @@ public interface FileService {
 
     Object uploadPic(MultipartFile multipartFile);
 
-
     Object uploadMusic(MultipartFile multipartFile);
+
+    Object downloadPic(String bucket, String fileName);
+
+    Object downloadMusic(String bucket, String fileName);
 }

@@ -1,12 +1,13 @@
 package com.laplace;
 
-import io.minio.*;
-import io.minio.errors.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import com.sun.jndi.toolkit.url.Uri;
+
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 /**
  * @Author: YEP
@@ -15,20 +16,8 @@ import java.security.NoSuchAlgorithmException;
  * @Email:
  */
 public class Main {
-    public static void main(String[] args) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        MinioClient minioClient = MinioClient.builder().endpoint("http://81.68.81.151:9090").credentials("YEP", "2017248646").build();
-        File file = new File("C:\\Users\\admin\\Desktop\\music");
-        File[] files = file.listFiles();
-        assert files != null;
-        for (File f : files) {
-            String path = f.getAbsolutePath();
-            if (path.endsWith(".mp3") || path.endsWith(".flac")) {
-                minioClient.uploadObject(UploadObjectArgs.builder()
-                        .bucket("music")
-                        .object(f.getName())
-                        .filename(path)
-                        .build());
-            }
-        }
+    public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException {
+        System.out.println(URLEncoder.encode("96猫 (クロネコ) - トルコ行進曲 - オワタ (^o^)  (土耳其进行曲 - 完蛋啦＼(^o^)／) [mqms2].mp3", "utf-8"));
+        System.out.println(URLDecoder.decode("96猫+(クロネコ)+-+トルコ行進曲+-+オワタ+(^o^)++(土耳其进行曲+-+完蛋啦＼(^o^)／)+[mqms2].mp3","utf-8"));
     }
 }
