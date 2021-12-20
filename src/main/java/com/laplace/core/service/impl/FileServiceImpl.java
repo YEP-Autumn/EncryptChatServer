@@ -2,7 +2,11 @@ package com.laplace.core.service.impl;
 
 import com.laplace.core.service.FileService;
 import com.laplace.core.utils.MinioUtils;
+import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
+import io.minio.Result;
+import io.minio.messages.Item;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @Author: YEP
@@ -61,4 +67,46 @@ public class FileServiceImpl implements FileService {
         headers.setContentDispositionFormData("attachment", fileName);
         return new ResponseEntity<byte[]>(objToByte, headers, HttpStatus.OK);
     }
+
+    @Override
+    public Object snoopingBucket(String bucket, int page, int rows) {
+
+        if (page < 1 || rows < 1) return 404;
+        if (!MinioUtils.verifyBucket(minioClient, bucket)) return 404;
+
+        Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
+                .bucket(bucket)
+                .build());
+        List<String> total_s = new ArrayList<>();
+        results.forEach(new Consumer<Result<Item>>() {
+            @SneakyThrows
+            @Override
+            public void accept(Result<Item> itemResult) {
+                total_s.add(itemResult.get().objectName());
+            }
+        });
+
+        List<String> rtn_s = total_s;
+        int size = rtn_s.size();  // 总条数
+        int start = rows * (page - 1);  // 起始位置
+        if (start > size) {             // 如果起始位置比总条数大，返回null
+            rtn_s = new ArrayList<>();
+        } else if (start + rows >= size) {  // 如果 起始位置+显示行数 大于 size 则展示 start位置 到 size大小
+            rtn_s = rtn_s.subList(start, size);
+        } else {                            // 否则 展示 start + rows 列
+            rtn_s = rtn_s.subList(start, start + rows);
+        }
+
+        HashMap<String, Object> stringListHashMap = new HashMap<>();
+        stringListHashMap.put("YEP-Autumn", rtn_s);
+        stringListHashMap.put("total", size);
+
+        return stringListHashMap;
+    }
+
+    @Override
+    public Object random() {
+        return null;
+    }
+
 }

@@ -1,12 +1,12 @@
 package com.laplace.core.controller;
 
 import com.laplace.core.service.FileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -19,6 +19,7 @@ import java.net.URLDecoder;
 @RestController
 @ResponseBody
 @Component
+@Slf4j
 public class FileController {
 
     @Resource
@@ -26,22 +27,57 @@ public class FileController {
 
     @PostMapping("/uploadPic")
     public Object uploadPic(@RequestParam("image") MultipartFile multipartFile) {
-        return service.uploadPic(multipartFile);
+        try {
+            return service.uploadPic(multipartFile);
+        } catch (Exception e) {
+            log.error("uploadPic:error\n", e);
+        }
+        return 404;
     }
-
 
     @PostMapping("/uploadMusic")
     public Object uploadMusic(@RequestParam("music") MultipartFile multipartFile) {
-        return service.uploadMusic(multipartFile);
+        try {
+            return service.uploadMusic(multipartFile);
+        } catch (Exception e) {
+            log.error("uploadMusic:error\n", e);
+        }
+        return 404;
     }
 
     @RequestMapping("/downloadPic/{bucket}/{fileName}")
-    public Object downloadPic(@PathVariable("bucket") String bucket, @PathVariable("fileName") String fileName) throws UnsupportedEncodingException {
-        return service.downloadPic(URLDecoder.decode(bucket,"UTF-8"), URLDecoder.decode(fileName,"UTF-8"));
+    public Object downloadPic(@PathVariable("bucket") String bucket, @PathVariable("fileName") String fileName) {
+        try {
+            return service.downloadPic(URLDecoder.decode(bucket, "UTF-8"), URLDecoder.decode(fileName, "UTF-8"));
+        } catch (Exception e) {
+            log.error("downloadPic:error\n", e);
+        }
+        return 404;
     }
 
     @RequestMapping("/downloadMusic/{bucket}/{fileName}")
-    public Object downloadMusic(@PathVariable("bucket") String bucket, @PathVariable("fileName") String fileName) throws UnsupportedEncodingException {  String n = "96猫 (クロネコ) - トルコ行進曲 - オワタ (^o^) (土耳其进行曲 - 完蛋啦＼(^o^)／) [mqms2].mp3";
-        return service.downloadMusic(URLDecoder.decode(bucket,"UTF-8"), URLDecoder.decode(fileName,"UTF-8"));
+    public Object downloadMusic(@PathVariable("bucket") String bucket, @PathVariable("fileName") String fileName) {
+        try {
+            return service.downloadMusic(URLDecoder.decode(bucket, "UTF-8"), URLDecoder.decode(fileName, "UTF-8"));
+        } catch (Exception e) {
+            log.error("downloadMusic:error\n", e);
+        }
+        return 404;
     }
+
+    @RequestMapping("/snoopingBucket/{bucket}/{page}/{rows}")
+    public Object snoopingBucket(@PathVariable("bucket") String bucket, @PathVariable("page") int page, @PathVariable("rows") int rows) {
+        try {
+            return service.snoopingBucket(URLDecoder.decode(bucket, "UTF-8"), page, rows);
+        } catch (Exception e) {
+            log.error("listPic:error\n", e);
+        }
+        return 404;
+    }
+
+    @RequestMapping("/randomImage")
+    public Object randomImage() {
+        return service.random();
+    }
+
 }

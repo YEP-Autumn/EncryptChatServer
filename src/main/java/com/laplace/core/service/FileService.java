@@ -21,4 +21,9 @@ public interface FileService {
     Object downloadPic(String bucket, String fileName);
 
     Object downloadMusic(String bucket, String fileName);
+
+    Object snoopingBucket(String bucket, int page, int rows);
+
+    Object random();
+
 }
