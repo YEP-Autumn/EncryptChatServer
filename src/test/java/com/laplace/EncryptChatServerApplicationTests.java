@@ -1,6 +1,8 @@
 package com.laplace;
 
 import com.laplace.core.utils.MinioUtils;
+import com.laplace.module.email.EmailMessenger;
+import com.laplace.module.email.MailMessenger;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.messages.Bucket;
@@ -10,6 +12,7 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.io.IOUtil;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.annotation.Resource;
 import java.io.FileOutputStream;
@@ -30,6 +33,14 @@ class EncryptChatServerApplicationTests {
     @Test
     public void server() throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         System.out.println(MinioUtils.verifyFile(minioClient, "music", "96猫 (クロネコ) - トルコ行進曲 - オワタ (^o^)  (土耳其进行曲 - 完蛋啦＼(^o^)／) [mqms2].mp3"));
+    }
+
+    @Resource
+    EmailMessenger messenger;
+
+
+    @Test
+    public void fun() throws Exception {
     }
 
 }

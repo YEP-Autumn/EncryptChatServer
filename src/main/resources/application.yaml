@@ -8,6 +8,20 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
+  mail:
+    host: smtp.qq.com
+    username: 2017248646
+    password: quvenuzuwdvreeai
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.socketFactory.port: 465
+      mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+      mail.smtp.socketFactory.fallback: false
+    port: 465
+
+
 
 mybatis:
   configuration:
@@ -42,3 +56,8 @@ logging:
   level:
     com.netflix.discovery: 'INFO'
     org.springframework.cloud: 'WARN'
+
+messenger:
+  email: 2017248646
+  token: quvenuzuwdvreeai
+
